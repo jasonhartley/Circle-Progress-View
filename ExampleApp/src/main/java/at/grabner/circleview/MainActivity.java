@@ -104,33 +104,33 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Setup Switch
-        mSwitchSpin = (Switch) findViewById(R.id.switch1);
-        mSwitchSpin.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            mCircleView.spin();
-                        } else {
-                            mCircleView.stopSpinning();
-                        }
-                    }
-                }
-
-        );
-
-        mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
-        mSwitchShowUnit.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener()
-                {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        mCircleView.setShowUnit(isChecked);
-                        mShowUnit = isChecked;
-                    }
-                }
-
-        );
+//        mSwitchSpin = (Switch) findViewById(R.id.switch1);
+//        mSwitchSpin.setOnCheckedChangeListener(
+//                new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        if (isChecked) {
+//                            mCircleView.spin();
+//                        } else {
+//                            mCircleView.stopSpinning();
+//                        }
+//                    }
+//                }
+//
+//        );
+//
+//        mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
+//        mSwitchShowUnit.setOnCheckedChangeListener(
+//                new CompoundButton.OnCheckedChangeListener()
+//                {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        mCircleView.setShowUnit(isChecked);
+//                        mShowUnit = isChecked;
+//                    }
+//                }
+//
+//        );
 
         //Setup SeekBar
         mSeekBar = (SeekBar)findViewById(R.id.seekBar);
@@ -151,28 +151,28 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         mCircleView.setValueAnimated(seekBar.getProgress(), 1500);
-                        mSwitchSpin.setChecked(false);
+//                        mSwitchSpin.setChecked(false);
                     }
                 }
         );
 
-        mSeekBarSpinnerLength = (SeekBar) findViewById(R.id.seekBar2);
-        mSeekBarSpinnerLength.setMax(360);
-        mSeekBarSpinnerLength.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        mCircleView.setSpinningBarLength(seekBar.getProgress());
-                    }
-                });
+//        mSeekBarSpinnerLength = (SeekBar) findViewById(R.id.seekBar2);
+//        mSeekBarSpinnerLength.setMax(360);
+//        mSeekBarSpinnerLength.setOnSeekBarChangeListener(
+//                new SeekBar.OnSeekBarChangeListener() {
+//                    @Override
+//                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                    }
+//
+//                    @Override
+//                    public void onStartTrackingTouch(SeekBar seekBar) {
+//                    }
+//
+//                    @Override
+//                    public void onStopTrackingTouch(SeekBar seekBar) {
+//                        mCircleView.setSpinningBarLength(seekBar.getProgress());
+//                    }
+//                });
 
 
     }

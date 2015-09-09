@@ -1129,6 +1129,7 @@ public class CircleProgressView extends View {
         } else {
             drawBar(canvas, degrees);
 //            drawTextWithUnit(canvas);
+            drawInnerBitmap(canvas);
         }
 
 
@@ -1163,6 +1164,10 @@ public class CircleProgressView extends View {
         _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
 
 
+    }
+
+    private void drawInnerBitmap(Canvas canvas) {
+        canvas.drawBitmap(mCenterBitmap, null, mInnerBitmapBound, mCenterPaint);
     }
 
     private void drawTextWithUnit(Canvas canvas) {
@@ -1241,7 +1246,6 @@ public class CircleProgressView extends View {
         }
 
 //        canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.09f), mActualTextBounds.bottom, mTextPaint);
-        canvas.drawBitmap(mCenterBitmap, null, mInnerBitmapBound, mCenterPaint);
 
         if (mShowUnit) {
 
