@@ -3,6 +3,7 @@ package at.grabner.circleprogress;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -16,6 +17,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorInt;
@@ -105,13 +107,17 @@ public class CircleProgressView extends View {
     private Paint     mBarSpinnerPaint       = new Paint();
     private Paint     mBackgroundCirclePaint = new Paint();
     private Paint     mRimPaint              = new Paint();
-    private Paint     mTextPaint             = new Paint();
+//    private Paint     mTextPaint             = new Paint();
     private Paint     mUnitTextPaint         = new Paint();
     private Paint     mContourPaint          = new Paint();
     //Rectangles
     private RectF     mCircleBounds          = new RectF();
     private RectF     mInnerCircleBound      = new RectF();
+    private RectF mInnerBitmapBound = new RectF();
     private PointF mCenter;
+
+    private Bitmap    mCenterBitmap;
+    private Paint     mCenterPaint = new Paint();
 
     /**
      * Maximum size of the text.
@@ -555,8 +561,13 @@ public class CircleProgressView extends View {
      * @param textSize The text size of the unit.
      */
     public void setTextSize(@IntRange(from = 0) int textSize) {
-        this.mTextPaint.setTextSize(textSize);
+//        this.mTextPaint.setTextSize(textSize);
         mIsAutoTextSize = false;
+    }
+
+    public void setCenterImage(int id) {
+        mCenterBitmap = BitmapFactory.decodeResource(getResources(), id);
+        //mCenterBitmap.setHasAlpha(true);// Possibly unnecessary
     }
 
     /**
@@ -803,7 +814,7 @@ public class CircleProgressView extends View {
      */
     public void setTextColor(@ColorInt int textColor) {
         mTextColor = textColor;
-        mTextPaint.setColor(textColor);
+//        mTextPaint.setColor(textColor);
     }
 
     /**
@@ -892,7 +903,7 @@ public class CircleProgressView extends View {
      * @param typeface The typeface to use for the text
      */
     public void setTextTypeface(Typeface typeface) {
-        mTextPaint.setTypeface(typeface);
+//        mTextPaint.setTypeface(typeface);
     }
 
     /**
@@ -972,13 +983,13 @@ public class CircleProgressView extends View {
     }
 
     private void setupTextPaint() {
-        mTextPaint.setSubpixelText(true);
-        mTextPaint.setLinearText(true);
-        mTextPaint.setTypeface(Typeface.MONOSPACE);
-        mTextPaint.setColor(mTextColor);
-        mTextPaint.setStyle(Style.FILL);
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setTextSize(mTextSize);
+//        mTextPaint.setSubpixelText(true);
+//        mTextPaint.setLinearText(true);
+//        mTextPaint.setTypeface(Typeface.MONOSPACE);
+//        mTextPaint.setColor(mTextColor);
+//        mTextPaint.setStyle(Style.FILL);
+//        mTextPaint.setAntiAlias(true);
+//        mTextPaint.setTextSize(mTextSize);
 
     }
 
@@ -1050,10 +1061,16 @@ public class CircleProgressView extends View {
                 mPaddingTop + mBarWidth,
                 width - mPaddingRight - mBarWidth,
                 height - mPaddingBottom - mBarWidth);
-        mInnerCircleBound = new RectF(mPaddingLeft + (mBarWidth * 1.5f),
-                mPaddingTop + (mBarWidth * 1.5f),
-                width - mPaddingRight - (mBarWidth * 1.5f),
-                height - mPaddingBottom - (mBarWidth * 1.5f));
+        mInnerCircleBound = new RectF(
+                mPaddingLeft + (mBarWidth * 2f),
+                mPaddingTop + (mBarWidth * 2f),
+                width - mPaddingRight - (mBarWidth * 2f),
+                height - mPaddingBottom - (mBarWidth * 2f));
+        mInnerBitmapBound = new RectF(
+            mPaddingLeft + (mBarWidth * 6f),
+            mPaddingTop + (mBarWidth * 6f),
+            width - mPaddingRight - (mBarWidth * 6f),
+            height - mPaddingBottom - (mBarWidth * 6f));
         mOuterTextBounds = getInnerCircleRect(mCircleBounds);
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
@@ -1077,7 +1094,7 @@ public class CircleProgressView extends View {
         float degrees = (360f / mMaxValue * mCurrentValue);
 
         //Draw the background circle
-        if (mBackgroundCircleColor > 0) {
+        if (mBackgroundCircleColor != 0) {
             canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
         }
         //Draw the rim
@@ -1111,7 +1128,7 @@ public class CircleProgressView extends View {
 
         } else {
             drawBar(canvas, degrees);
-            drawTextWithUnit(canvas);
+//            drawTextWithUnit(canvas);
         }
 
 
@@ -1134,11 +1151,12 @@ public class CircleProgressView extends View {
 
     private void drawDebug(Canvas canvas) {
         Paint innerRectPaint = new Paint();
-        innerRectPaint.setColor(Color.YELLOW);
-        canvas.drawRect(mCircleBounds, innerRectPaint);
 
         innerRectPaint.setColor(Color.MAGENTA);
-        canvas.drawRect(mOuterTextBounds, innerRectPaint);
+        canvas.drawRect(mInnerCircleBound, innerRectPaint);
+
+        innerRectPaint.setColor(Color.YELLOW);
+        canvas.drawRect(mInnerBitmapBound, innerRectPaint);
     }
 
     private void drawBar(Canvas _canvas, float _degrees) {
@@ -1153,7 +1171,7 @@ public class CircleProgressView extends View {
         boolean update = false;
         //Draw Text
         if (mIsAutoColorEnabled) {
-            mTextPaint.setColor(getTextColor(mCurrentValue));
+//            mTextPaint.setColor(getTextColor(mCurrentValue));
         }
 
         //set text
@@ -1191,8 +1209,8 @@ public class CircleProgressView extends View {
                     textRect = new RectF(mOuterTextBounds.left, mOuterTextBounds.top, mOuterTextBounds.right - ((mOuterTextBounds.width() * (mRelativeUniteSize)) * relativeGap), mOuterTextBounds.bottom);
                 }
 
-                mTextPaint.setTextSize(calcTextSizeForRect(text, mTextPaint, textRect) * mTextScale);
-                mActualTextBounds = getTextBounds(text, mTextPaint, textRect); // center text in text rect
+//                mTextPaint.setTextSize(calcTextSizeForRect(text, mTextPaint, textRect) * mTextScale);
+//                mActualTextBounds = getTextBounds(text, mTextPaint, textRect); // center text in text rect
             }
 
         } else {
@@ -1200,8 +1218,8 @@ public class CircleProgressView extends View {
             if (mTextLength != text.length()) {
                 update = true;
                 mTextLength = text.length();
-                mTextPaint.setTextSize(mTextSize);
-                mActualTextBounds = mOuterTextBounds = getTextBounds(text, mTextPaint, mCircleBounds); //center text in circle
+//                mTextPaint.setTextSize(mTextSize);
+//                mActualTextBounds = mOuterTextBounds = getTextBounds(text, mTextPaint, mCircleBounds); //center text in circle
 
                 if (mShowUnit) {
                     // Unit position calculation uses mOuterTextBounds so make it big enough to fit text unit
@@ -1222,7 +1240,8 @@ public class CircleProgressView extends View {
             canvas.drawRect(mActualTextBounds, rectPaint);
         }
 
-        canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.09f), mActualTextBounds.bottom, mTextPaint);
+//        canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.09f), mActualTextBounds.bottom, mTextPaint);
+        canvas.drawBitmap(mCenterBitmap, null, mInnerBitmapBound, mCenterPaint);
 
         if (mShowUnit) {
 

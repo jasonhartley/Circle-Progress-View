@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         mCircleView.setValueAnimated(24);
 
         //show unit
-        mCircleView.setUnit("%");
+        mCircleView.setUnit("");
         mCircleView.setShowUnit(mShowUnit);
 
         //text sizes
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         //if you want the calculated text sizes to be bigger/smaller you can do so via
         mCircleView.setUnitScale(0.9f);
         mCircleView.setTextScale(0.9f);
+
+        mCircleView.setCenterImage(R.drawable.tier_reg_r);
 
         //color
         //you can use a gradient
