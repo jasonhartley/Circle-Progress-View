@@ -103,86 +103,36 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        //Setup Switch
-//        mSwitchSpin = (Switch) findViewById(R.id.switch1);
-//        mSwitchSpin.setOnCheckedChangeListener(
-//                new CompoundButton.OnCheckedChangeListener() {
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                        if (isChecked) {
-//                            mCircleView.spin();
-//                        } else {
-//                            mCircleView.stopSpinning();
-//                        }
-//                    }
-//                }
-//
-//        );
-//
-//        mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
-//        mSwitchShowUnit.setOnCheckedChangeListener(
-//                new CompoundButton.OnCheckedChangeListener()
-//                {
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                        mCircleView.setShowUnit(isChecked);
-//                        mShowUnit = isChecked;
-//                    }
-//                }
-//
-//        );
-
         //Setup SeekBar
-        mSeekBar = (SeekBar)findViewById(R.id.seekBar);
-
-        mSeekBar.setMax(100);
-        mSeekBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        mCircleView.setValueAnimated(seekBar.getProgress(), 1500);
-//                        mSwitchSpin.setChecked(false);
-                    }
-                }
-        );
-
-//        mSeekBarSpinnerLength = (SeekBar) findViewById(R.id.seekBar2);
-//        mSeekBarSpinnerLength.setMax(360);
-//        mSeekBarSpinnerLength.setOnSeekBarChangeListener(
+//        mSeekBar = (SeekBar)findViewById(R.id.seekBar);
+//
+//        mSeekBar.setMax(100);
+//        mSeekBar.setOnSeekBarChangeListener(
 //                new SeekBar.OnSeekBarChangeListener() {
 //                    @Override
 //                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
 //                    }
 //
 //                    @Override
 //                    public void onStartTrackingTouch(SeekBar seekBar) {
+//
 //                    }
 //
 //                    @Override
 //                    public void onStopTrackingTouch(SeekBar seekBar) {
-//                        mCircleView.setSpinningBarLength(seekBar.getProgress());
+//                        mCircleView.setValueAnimated(seekBar.getProgress(), 1500);
 //                    }
-//                });
-
+//                }
+//        );
 
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
         mCircleView.setValue(0);
-        mCircleView.setValueAnimated(42);
+        mCircleView.setValueAnimated(42, 1500);
     }
 
 }

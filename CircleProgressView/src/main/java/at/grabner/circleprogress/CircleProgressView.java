@@ -46,7 +46,7 @@ import android.view.View;
  *         Licensed under the Creative Commons Attribution 3.0 license see:
  *         http://creativecommons.org/licenses/by/3.0/
  */
-public class CircleProgressView extends View {
+public class    CircleProgressView extends View {
 
     /**
      * The log tag.
@@ -56,7 +56,7 @@ public class CircleProgressView extends View {
 
     //region members
     //value animation
-    float mCurrentValue = 42;
+    float mCurrentValue = 0;
     float mValueTo      = 0;
     float mValueFrom    = 0;
     float mMaxValue     = 100;
@@ -107,7 +107,6 @@ public class CircleProgressView extends View {
     private Paint     mBarSpinnerPaint       = new Paint();
     private Paint     mBackgroundCirclePaint = new Paint();
     private Paint     mRimPaint              = new Paint();
-//    private Paint     mTextPaint             = new Paint();
     private Paint     mUnitTextPaint         = new Paint();
     private Paint     mContourPaint          = new Paint();
     //Rectangles
@@ -1107,47 +1106,8 @@ public class CircleProgressView extends View {
             canvas.drawArc(mCircleInnerContour, 360, 360, false, mContourPaint);
         }
 
-
-        //Draw spinner
-        if (mAnimationState == AnimationState.SPINNING || mAnimationState == AnimationState.END_SPINNING) {
-            drawSpinner(canvas);
-            if (mShowTextWhileSpinning) {
-                drawTextWithUnit(canvas);
-            }
-
-        } else if (mAnimationState == AnimationState.END_SPINNING_START_ANIMATING) {
-            //draw spinning arc
-            drawSpinner(canvas);
-
-            if (mDrawBarWhileSpinning) {
-                drawBar(canvas, degrees);
-                drawTextWithUnit(canvas);
-            } else if (mShowTextWhileSpinning) {
-                drawTextWithUnit(canvas);
-            }
-
-        } else {
-            drawBar(canvas, degrees);
-//            drawTextWithUnit(canvas);
-            drawInnerBitmap(canvas);
-        }
-
-
-        if (mClippingBitmap != null) {
-            canvas.drawBitmap(mClippingBitmap, 0, 0, mMaskPaint);
-        }
-
-    }
-
-    private void drawSpinner(Canvas canvas) {
-
-        if (mSpinningBarLengthCurrent < 0) {
-            mSpinningBarLengthCurrent = 1;
-        }
-        float startAngle = (mStartAngle + mCurrentSpinnerDegreeValue - mSpinningBarLengthCurrent);
-        canvas.drawArc(mCircleBounds, startAngle, mSpinningBarLengthCurrent, false,
-                mBarSpinnerPaint);
-
+        drawBar(canvas, degrees);
+        drawInnerBitmap(canvas);
     }
 
     private void drawDebug(Canvas canvas) {
@@ -1162,135 +1122,11 @@ public class CircleProgressView extends View {
 
     private void drawBar(Canvas _canvas, float _degrees) {
         _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
-
-
     }
 
     private void drawInnerBitmap(Canvas canvas) {
         canvas.drawBitmap(mCenterBitmap, null, mInnerBitmapBound, mCenterPaint);
     }
-
-    private void drawTextWithUnit(Canvas canvas) {
-
-        final float relativeGap = 1.03f; //gap size between text and unit
-        boolean update = false;
-        //Draw Text
-        if (mIsAutoColorEnabled) {
-//            mTextPaint.setColor(getTextColor(mCurrentValue));
-        }
-
-        //set text
-        String text;
-        switch (mTextMode) {
-            case TEXT:
-            default:
-                text = mText != null ? mText : "";
-                break;
-            case PERCENT:
-                int percent = Math.round(100f / mMaxValue * mCurrentValue);
-                text = String.valueOf(percent);
-                break;
-            case VALUE:
-                text = String.valueOf(Math.round(mCurrentValue));
-                break;
-        }
-
-
-        //set text size and position
-        if (mIsAutoTextSize) {
-            // only re-calc position and size if string length changed
-            if (mTextLength != text.length()) {
-                update = true;
-                mTextLength = text.length();
-                if (mTextLength == 1) {
-                    mOuterTextBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.top, mOuterTextBounds.right - (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.bottom);
-                } else {
-                    mOuterTextBounds = getInnerCircleRect(mCircleBounds);
-                }
-                RectF textRect = mOuterTextBounds;
-
-                if (mShowUnit) {
-                    //shrink text Rect so that there is space for the unit
-                    textRect = new RectF(mOuterTextBounds.left, mOuterTextBounds.top, mOuterTextBounds.right - ((mOuterTextBounds.width() * (mRelativeUniteSize)) * relativeGap), mOuterTextBounds.bottom);
-                }
-
-//                mTextPaint.setTextSize(calcTextSizeForRect(text, mTextPaint, textRect) * mTextScale);
-//                mActualTextBounds = getTextBounds(text, mTextPaint, textRect); // center text in text rect
-            }
-
-        } else {
-            // only re-calc position and size if string length changed
-            if (mTextLength != text.length()) {
-                update = true;
-                mTextLength = text.length();
-//                mTextPaint.setTextSize(mTextSize);
-//                mActualTextBounds = mOuterTextBounds = getTextBounds(text, mTextPaint, mCircleBounds); //center text in circle
-
-                if (mShowUnit) {
-                    // Unit position calculation uses mOuterTextBounds so make it big enough to fit text unit
-                    mUnitTextPaint.setTextSize(mUnitSize);
-                    mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mCircleBounds);
-                    float gapWidthHalf = (mInnerCircleBound.width() * 0.05f / 2f);
-
-                    mOuterTextBounds = new RectF(mOuterTextBounds.left - (mUnitBounds.width() / 2f) - (gapWidthHalf), mOuterTextBounds.top, mOuterTextBounds.right + (mUnitBounds.width() / 2f) + (gapWidthHalf), mOuterTextBounds.bottom);
-                    mActualTextBounds.offset(-(mUnitBounds.width() / 2f) - gapWidthHalf, 0);
-                }
-
-            }
-        }
-
-        if (DEBUG) {
-            Paint rectPaint = new Paint();
-            rectPaint.setColor(Color.GREEN);
-            canvas.drawRect(mActualTextBounds, rectPaint);
-        }
-
-//        canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.09f), mActualTextBounds.bottom, mTextPaint);
-
-        if (mShowUnit) {
-
-
-            if (mIsAutoColorEnabled) {
-                mUnitTextPaint.setColor(getTextColor(mCurrentValue));
-            }
-            if (update) {
-                //calc unit text position
-
-                //set unit text size
-                if (mIsAutoTextSize) {
-                    //calc the rectangle containing the unit text
-                    mUnitBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * (1 - mRelativeUniteSize) * relativeGap), mOuterTextBounds.top, mOuterTextBounds.right, mOuterTextBounds.bottom);
-                    mUnitTextPaint.setTextSize(calcTextSizeForRect(mUnit, mUnitTextPaint, mUnitBounds) * mUnitScale);
-                    mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mUnitBounds); // center text in rectangle and reuse it
-
-                } else {
-                    float gapWidth = (mInnerCircleBound.width() * 0.05f);
-                    mUnitTextPaint.setTextSize(mUnitSize);
-                    mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mCircleBounds);
-                    float dx = mActualTextBounds.right - mUnitBounds.left + gapWidth;
-                    mUnitBounds.offset(dx, 0);
-                }
-                //move unite to top of text
-                float dy = mActualTextBounds.top - mUnitBounds.top;
-                mUnitBounds.offset(0, dy);
-            }
-
-            if (DEBUG) {
-                Paint rectPaint = new Paint();
-                rectPaint.setColor(Color.RED);
-                canvas.drawRect(mUnitBounds, rectPaint);
-            }
-
-            canvas.drawText(mUnit, mUnitBounds.left, mUnitBounds.bottom, mUnitTextPaint);
-        }
-    }
-
-    //endregion draw
-    //----------------------------------
-
-    //----------------------------------
-    //region important getter / setter
-    //----------------------------------
 
     /**
      * Turn off spinning mode
@@ -1365,51 +1201,6 @@ public class CircleProgressView extends View {
         mAnimationHandler.sendMessage(msg);
     }
 
-    //endregion important getter / setter
-    //----------------------------------
-
-    //----------------------------------
-    //region touch input
-
-    private int mTouchEventCount;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        if (mSeekModeEnabled == false) {
-            return super.onTouchEvent(event);
-        }
-
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_UP: {
-                mTouchEventCount = 0;
-                PointF point = new PointF(event.getX(), event.getY());
-                float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
-                setValueAnimated(mMaxValue / 360f * angle, 800);
-                return true;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                mTouchEventCount++;
-                if (mTouchEventCount > 5) { //touch/move guard
-                    PointF point = new PointF(event.getX(), event.getY());
-                    float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
-                    setValue(mMaxValue / 360f * angle);
-                    return true;
-                } else {
-                    return false;
-                }
-
-            }
-            case MotionEvent.ACTION_CANCEL:
-                mTouchEventCount = 0;
-                return false;
-        }
-
-
-        return super.onTouchEvent(event);
-    }
-
     /**
      * @param _angle The angle in degree to normalize
      * @return the angle between 0 (EAST) and 360
@@ -1417,54 +1208,6 @@ public class CircleProgressView extends View {
     public static float normalizeAngle(float _angle) {
         return (((_angle % 360) + 360) % 360);
     }
-
-
-    /**
-     * Calculates the angle from centerPt to targetPt in degrees.
-     * The return should range from [0,360), rotating CLOCKWISE,
-     * 0 and 360 degrees represents EAST,
-     * 90 degrees represents SOUTH, etc...
-     * <p/>
-     * Assumes all points are in the same coordinate space.  If they are not,
-     * you will need to call SwingUtilities.convertPointToScreen or equivalent
-     * on all arguments before passing them  to this function.
-     *
-     * @param centerPt Point we are rotating around.
-     * @param targetPt Point we want to calculate the angle to.
-     * @return angle in degrees.  This is the angle from centerPt to targetPt.
-     */
-    public static double calcRotationAngleInDegrees(PointF centerPt, PointF targetPt) {
-        // calculate the angle theta from the deltaY and deltaX values
-        // (atan2 returns radians values from [-PI,PI])
-        // 0 currently points EAST.
-        // NOTE: By preserving Y and X param order to atan2,  we are expecting
-        // a CLOCKWISE angle direction.
-        double theta = Math.atan2(targetPt.y - centerPt.y, targetPt.x - centerPt.x);
-
-        // rotate the theta angle clockwise by 90 degrees
-        // (this makes 0 point NORTH)
-        // NOTE: adding to an angle rotates it clockwise.
-        // subtracting would rotate it counter-clockwise
-//        theta += Math.PI/2.0;
-
-        // convert from radians to degrees
-        // this will give you an angle from [0->270],[-180,0]
-        double angle = Math.toDegrees(theta);
-
-        // convert to positive range [0-360)
-        // since we want to prevent negative angles, adjust them now.
-        // we can assume that atan2 will not return a negative value
-        // greater than one partial rotation
-        if (angle < 0) {
-            angle += 360;
-        }
-
-        return angle;
-    }
-
-
-    //endregion
-    //----------------------------------
 
 }
 
