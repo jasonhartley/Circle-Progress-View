@@ -63,7 +63,7 @@ public class CircleProgressView extends View {
     private RectF mCircleBounds = new RectF();
     private RectF mInnerCircleBound = new RectF();
     private RectF mInnerBitmapBound = new RectF();
-    private PointF mCenter;
+    private PointF mCenter;// for future use: might be better for bitmap placement
     // Center image
     private Bitmap mCenterBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
     private Paint mCenterPaint = new Paint();

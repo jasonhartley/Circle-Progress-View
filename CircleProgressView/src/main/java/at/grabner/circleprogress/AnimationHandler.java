@@ -12,9 +12,9 @@ import java.lang.ref.WeakReference;
 public class AnimationHandler extends Handler {
 
     private final WeakReference<CircleProgressView> mCircleViewWeakReference;
-    private       long                              mAnimationStartTime;
+    private long mAnimationStartTime;
     // The interpolator for value animations
-    private TimeInterpolator mInterpolator             = new AccelerateDecelerateInterpolator();
+    private TimeInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
 
     private static final boolean DEBUG = true;
 
@@ -34,8 +34,9 @@ public class AnimationHandler extends Handler {
             removeMessages(AnimationMsg.TICK.ordinal()); // necessary to remove concurrent ticks.
         }
 
-        if (DEBUG)
+        if (DEBUG) {
             Log.d("jch", "animation state: " + circleView.mAnimationState + " msgType: " + msgType);
+        }
 
         switch (circleView.mAnimationState) {
 
