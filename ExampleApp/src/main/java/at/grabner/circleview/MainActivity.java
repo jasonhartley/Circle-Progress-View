@@ -19,10 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         mCircleView.setMaxValue(100);
         mCircleView.setCenterImage(R.drawable.tier_reg_r);
-
-        //color
-        //you can use a gradient
-        mCircleView.setBarColor(getResources().getColor(R.color.primary_color), getResources().getColor(R.color.secondary_color));
+        mCircleView.setBarColor(getResources().getColor(R.color.primary_color));
     }
 
     @Override

@@ -21,7 +21,7 @@
         CircleProgressView:barWidth="15dp"
         CircleProgressView:contourSize="0dp"
         CircleProgressView:maxValue="100"
-        CircleProgressView:rimColor="#B2DFDB"
+        CircleProgressView:rimColor="#F3F3F3"
         CircleProgressView:rimWidth="15dp"
         CircleProgressView:seekMode="true"/>
 
