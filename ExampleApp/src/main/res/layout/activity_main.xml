@@ -23,62 +23,6 @@
         CircleProgressView:maxValue="100"
         CircleProgressView:rimColor="#B2DFDB"
         CircleProgressView:rimWidth="15dp"
-        CircleProgressView:seekMode="true"
-        CircleProgressView:textColor="#00796B"
-        CircleProgressView:unit="%"
-        CircleProgressView:unitColor="#009688"/>
-
-
-    <!--TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Value"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
-        android:text="Spinning Bar Length"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <SeekBar
-        android:id="@+id/seekBar2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginRight="10dp"
-            android:text="Spin"/>
-
-        <Switch
-            android:id="@+id/switch2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Show Unit"/>
-    </LinearLayout-->
+        CircleProgressView:seekMode="true"/>
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package at.grabner.circleprogress;
 import android.animation.TimeInterpolator;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
@@ -37,8 +38,8 @@ public class AnimationHandler extends Handler {
             removeMessages(AnimationMsg.TICK.ordinal()); // necessary to remove concurrent ticks.
         }
 
-        //if (msgType != AnimationMsg.TICK)
-        //    Log.d("JaGr", TAG + "LOG00099: State:" + circleView.mAnimationState + "     Received: " + msgType);
+        if (msgType != AnimationMsg.TICK)
+            Log.d("jch", "animation state: " + circleView.mAnimationState + " msgType: " + msgType);
 
         switch (circleView.mAnimationState) {
 

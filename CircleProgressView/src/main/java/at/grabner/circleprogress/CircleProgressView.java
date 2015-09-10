@@ -46,11 +46,8 @@ import android.view.View;
  *         Licensed under the Creative Commons Attribution 3.0 license see:
  *         http://creativecommons.org/licenses/by/3.0/
  */
-public class    CircleProgressView extends View {
+public class CircleProgressView extends View {
 
-    /**
-     * The log tag.
-     */
     private final static String  TAG   = "CircleView";
     private static final boolean DEBUG = false;
 
@@ -66,7 +63,6 @@ public class    CircleProgressView extends View {
     float mSpinningBarLengthOrig     = 42;
     float mCurrentSpinnerDegreeValue = 0;
 
-
     private int   mLayoutHeight = 0;
     private int   mLayoutWidth  = 0;
     private int   mCircleRadius = 80;
@@ -74,13 +70,6 @@ public class    CircleProgressView extends View {
     private int   mRimWidth     = 40;
     private int   mStartAngle   = 270;
     private float mContourSize  = 1;
-
-    //Default text sizes
-    private int   mUnitSize  = 10;
-    private int   mTextSize  = 10;
-    //Text scale
-    private float mTextScale = 1;
-    private float mUnitScale = 1;
 
     //Padding (with defaults)
     private int       mPaddingTop            = 5;
@@ -93,9 +82,6 @@ public class    CircleProgressView extends View {
     private int       mSpinnerColor          = mBarColorStandard; //stylish blue
     private int       mBackgroundCircleColor = 0x00000000;  //transparent
     private int       mRimColor              = 0xAA83d0c9;
-    private int       mTextColor             = 0xFF000000;
-    private int       mUnitColor             = 0xFF000000;
-    private boolean   mIsAutoColorEnabled    = false;
     private int[]     mBarColors             = new int[]{
             mBarColorStandard //stylish blue
     };
@@ -107,7 +93,6 @@ public class    CircleProgressView extends View {
     private Paint     mBarSpinnerPaint       = new Paint();
     private Paint     mBackgroundCirclePaint = new Paint();
     private Paint     mRimPaint              = new Paint();
-    private Paint     mUnitTextPaint         = new Paint();
     private Paint     mContourPaint          = new Paint();
     //Rectangles
     private RectF     mCircleBounds          = new RectF();
@@ -118,15 +103,6 @@ public class    CircleProgressView extends View {
     private Bitmap    mCenterBitmap;
     private Paint     mCenterPaint = new Paint();
 
-    /**
-     * Maximum size of the text.
-     */
-    private RectF mOuterTextBounds    = new RectF();
-    /**
-     * Actual size of the text.
-     */
-    private RectF mActualTextBounds   = new RectF();
-    private RectF mUnitBounds         = new RectF();
     private RectF mCircleOuterContour = new RectF();
     private RectF mCircleInnerContour = new RectF();
     //Animation
@@ -149,38 +125,13 @@ public class    CircleProgressView extends View {
     //The current state of the animation state machine.
     AnimationState mAnimationState = AnimationState.IDLE;
 
-
-    //Other
-    // The text to show
-    private String mText = "";
-
-    private String mUnit = "";
-    private int mTextLength;
-    /**
-     * Indicates if the given text, the current percentage, or the current value should be shown.
-     */
-    private TextMode mTextMode = TextMode.PERCENT;
-
-
-    private boolean mIsAutoTextSize;
-    private boolean mShowUnit = false;
-
     //clipping
     private Bitmap mClippingBitmap;
     private Paint  mMaskPaint;
 
-    /**
-     * Relative size of the unite string to the value string.
-     */
-    private float   mRelativeUniteSize = 0.3f;
     private boolean mSeekModeEnabled   = false;
 
-
-    private boolean mShowTextWhileSpinning = false;
-
     AnimationStateChangedListener mAnimationStateChangedListener;
-
-    //endregion members
 
     /**
      * The constructor for the CircleView
@@ -237,33 +188,6 @@ public class    CircleProgressView extends View {
         setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_spinBarLength,
                 mSpinningBarLengthOrig));
 
-
-        if (a.hasValue(R.styleable.CircleProgressView_textSize)) {
-            setTextSize((int) a.getDimension(R.styleable.CircleProgressView_textSize, mTextSize));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_unitSize)) {
-            setUnitSize((int) a.getDimension(R.styleable.CircleProgressView_unitSize, mUnitSize));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_textColor)) {
-            setTextColor(a.getColor(R.styleable.CircleProgressView_textColor, mTextColor));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_unitColor)) {
-            setUnitColor(a.getColor(R.styleable.CircleProgressView_unitColor, mUnitColor));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_autoTextColor)) {
-            setAutoTextColor(a.getBoolean(R.styleable.CircleProgressView_autoTextColor, mIsAutoColorEnabled));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_autoTextSize)) {
-            setAutoTextSize(a.getBoolean(R.styleable.CircleProgressView_autoTextSize, mIsAutoTextSize));
-        }
-        if (a.hasValue(R.styleable.CircleProgressView_textMode)) {
-            setTextMode(TextMode.values()[a.getInt(R.styleable.CircleProgressView_textMode, 0)]);
-        }
-        //if the mText is empty, show current percentage value
-        if (a.hasValue(R.styleable.CircleProgressView_text)) {
-            setText(a.getString(R.styleable.CircleProgressView_text));
-        }
-
         setRimColor(a.getColor(R.styleable.CircleProgressView_rimColor,
                 mRimColor));
 
@@ -275,17 +199,10 @@ public class    CircleProgressView extends View {
 
         setMaxValue(a.getFloat(R.styleable.CircleProgressView_maxValue, mMaxValue));
 
-        setUnit(a.getString(R.styleable.CircleProgressView_unit));
-        setShowUnit(a.getBoolean(R.styleable.CircleProgressView_showUnit, mShowUnit));
-
-        setTextScale(a.getFloat(R.styleable.CircleProgressView_textScale, mTextScale));
-        setUnitScale(a.getFloat(R.styleable.CircleProgressView_unitScale, mUnitScale));
-
         setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_seekMode, mSeekModeEnabled));
 
         setStartAngle(a.getInt(R.styleable.CircleProgressView_startAngle, mStartAngle));
 
-        setShowTextWhileSpinning(a.getBoolean(R.styleable.CircleProgressView_showTextInSpinningMode, mShowTextWhileSpinning));
         // Recycle
         a.recycle();
     }
@@ -347,10 +264,6 @@ public class    CircleProgressView extends View {
 
         float scaleX = 1;
         float scaleY = 1;
-        if (isShowUnit()) {
-            scaleX = 0.77f; // scaleX square to rectangle, so the longer text with unit fits better
-            scaleY = 1.33f;
-        }
 
         return new RectF(_circleBounds.left + (widthDelta * scaleX), _circleBounds.top + (widthDelta * scaleY), _circleBounds.right - (widthDelta * scaleX), _circleBounds.bottom - (widthDelta * scaleY));
 
@@ -404,29 +317,6 @@ public class    CircleProgressView extends View {
         }
 
         invalidate();
-    }
-
-    //region setter / getter
-
-    public void setAnimationStateChangedListener(AnimationStateChangedListener _animationStateChangedListener) {
-        mAnimationStateChangedListener = _animationStateChangedListener;
-    }
-
-
-    public int getUnitSize() {
-        return mUnitSize;
-    }
-
-    /**
-     * Text size of the unit string. Only used if text size is also set. (So automatic text size
-     * calculation is off. see {@link #setTextSize(int)}).
-     * If auto text size is on, use {@link #setUnitScale(float)} to scale unit size.
-     *
-     * @param unitSize The text size of the unit.
-     */
-    public void setUnitSize(@IntRange(from = 0) int unitSize) {
-        mUnitSize = unitSize;
-        mUnitTextPaint.setTextSize(unitSize);
     }
 
     public boolean isSeekModeEnabled() {
@@ -486,42 +376,6 @@ public class    CircleProgressView extends View {
     }
 
     /**
-     * Set the text in the middle of the circle view.
-     * You need also set the {@link TextMode} to TextMode.TEXT to see the text.
-     * @param text The text to show
-     */
-    public void setText(String text) {
-        mText = text != null ? text : "";
-        invalidate();
-    }
-
-    /**
-     * Sets the auto text mode.
-     *
-     * @param _autoTextValue The mode
-     */
-    public void setTextMode(TextMode _autoTextValue) {
-        mTextMode = _autoTextValue;
-    }
-
-    public String getUnit() {
-        return mUnit;
-    }
-
-    /**
-     * @param _unit The unit to show next to the current value.
-     *              You also need to set {@link #setShowUnit(boolean)} to true.
-     */
-    public void setUnit(String _unit) {
-        if (_unit == null) {
-            mUnit = "";
-        } else {
-            mUnit = _unit;
-        }
-        invalidate();
-    }
-
-    /**
      * Returns the bounding rectangle of the given _text, with the size and style defined in the _textPaint centered in the middle of the _textBounds
      *
      * @param _text       The text.
@@ -547,40 +401,9 @@ public class    CircleProgressView extends View {
         return textRect;
     }
 
-
-    public int getTextSize() {
-        return mTextSize;
-    }
-
-
-    /**
-     * Text size of the text string. Disables auto text size
-     * If auto text size is on, use {@link #setTextScale(float)} to scale textSize.
-     *
-     * @param textSize The text size of the unit.
-     */
-    public void setTextSize(@IntRange(from = 0) int textSize) {
-//        this.mTextPaint.setTextSize(textSize);
-        mIsAutoTextSize = false;
-    }
-
     public void setCenterImage(int id) {
         mCenterBitmap = BitmapFactory.decodeResource(getResources(), id);
         //mCenterBitmap.setHasAlpha(true);// Possibly unnecessary
-    }
-
-    /**
-     * @return true if auto text size is enabled, false otherwise.
-     */
-    public boolean isAutoTextSize() {
-        return mIsAutoTextSize;
-    }
-
-    /**
-     * @param _autoTextSize true to enable auto text size calculation.
-     */
-    public void setAutoTextSize(boolean _autoTextSize) {
-        mIsAutoTextSize = _autoTextSize;
     }
 
     public int getPaddingTop() {
@@ -617,56 +440,6 @@ public class    CircleProgressView extends View {
 
     public int getCircleRadius() {
         return mCircleRadius;
-    }
-
-    public boolean isShowUnit() {
-        return mShowUnit;
-    }
-
-    /**
-     * @param _showUnit True to show unit, false to hide it.
-     */
-    public void setShowUnit(boolean _showUnit) {
-        if (_showUnit != mShowUnit) {
-            mShowUnit = _showUnit;
-            mTextLength = 0; // triggers recalculating text sizes
-            mOuterTextBounds = getInnerCircleRect(mCircleBounds);
-            invalidate();
-        }
-    }
-
-    /**
-     * @return The scale value
-     */
-    public float getUnitScale() {
-        return mUnitScale;
-    }
-
-    /**
-     * Scale factor for unit text next to the main text.
-     * Only used if auto text size is enabled.
-     *
-     * @param _unitScale The scale value.
-     */
-    public void setUnitScale(@FloatRange(from = 0.0) float _unitScale) {
-        mUnitScale = _unitScale;
-    }
-
-    /**
-     * @return The scale value
-     */
-    public float getTextScale() {
-        return mTextScale;
-    }
-
-    /**
-     * Scale factor for main text in the center of the circle view.
-     * Only used if auto text size is enabled.
-     *
-     * @param _textScale The scale value.
-     */
-    public void setTextScale(@FloatRange(from = 0.0) float _textScale) {
-        mTextScale = _textScale;
     }
 
     /**
@@ -785,9 +558,6 @@ public class    CircleProgressView extends View {
         }
     }
 
-
-
-
     public double getMaxValue() {
         return mMaxValue;
     }
@@ -800,43 +570,6 @@ public class    CircleProgressView extends View {
      */
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
-    }
-
-    public int getTextColor() {
-        return mTextColor;
-    }
-
-    /**
-     * Sets the text color.
-     * You also need to  set {@link #setAutoTextColor(boolean)} to false to see your color.
-     * @param textColor the color
-     */
-    public void setTextColor(@ColorInt int textColor) {
-        mTextColor = textColor;
-//        mTextPaint.setColor(textColor);
-    }
-
-    /**
-     * If auto text color is enabled, the text color  and the unit color is always the same as the rim color.
-     * This is useful if the rim has multiple colors (color gradient), than the text will always have
-     * the color of the tip of the rim.
-     *
-     * @param isEnabled true to enable, false to disable
-     */
-    public void setAutoTextColor(boolean isEnabled) {
-        mIsAutoColorEnabled = isEnabled;
-    }
-
-    /**
-     * Sets the unit text color.
-     * Also sets {@link #setAutoTextColor(boolean)} to false
-     *
-     * @param unitColor The color.
-     */
-    public void setUnitColor(@ColorInt int unitColor) {
-        mUnitColor = unitColor;
-        mUnitTextPaint.setColor(unitColor);
-        mIsAutoColorEnabled = false;
     }
 
     public float getSpinSpeed() {
@@ -898,46 +631,6 @@ public class    CircleProgressView extends View {
         }
     }
 
-    /**
-     * @param typeface The typeface to use for the text
-     */
-    public void setTextTypeface(Typeface typeface) {
-//        mTextPaint.setTypeface(typeface);
-    }
-
-    /**
-     * @param typeface The typeface to use for the unit text
-     */
-    public void setUnitTextTypeface(Typeface typeface) {
-        mUnitTextPaint.setTypeface(typeface);
-    }
-
-    /**
-     * @return The relative size (scale factor) of the unit text size to the text size
-     */
-    public float getRelativeUniteSize() {
-        return mRelativeUniteSize;
-    }
-
-    /**
-     * @param _relativeUniteSize The relative size (scale factor) of the unit text size to the text size.
-     *                           Especially useful for autotextsize=true;
-     */
-    public void setRelativeUniteSize(@FloatRange(from = 0.0) float _relativeUniteSize) {
-        mRelativeUniteSize = _relativeUniteSize;
-    }
-
-    public boolean isShowTextWhileSpinning() {
-        return mShowTextWhileSpinning;
-    }
-
-    /**
-     * @param shouldDrawTextWhileSpinning True to show text in spinning mode, false to hide it.
-     */
-    public void setShowTextWhileSpinning(boolean shouldDrawTextWhileSpinning) {
-        mShowTextWhileSpinning = shouldDrawTextWhileSpinning;
-    }
-
     public int getStartAngle() {
         return mStartAngle;
     }
@@ -947,13 +640,6 @@ public class    CircleProgressView extends View {
         mStartAngle = (int) normalizeAngle(_startAngle);
     }
 
-
-    //endregion getter / setter
-
-    //----------------------------------
-    //region Setting up stuff
-    //----------------------------------
-
     /**
      * Setup all paints.
      * Call only if changes to color or size properties are not visible.
@@ -962,8 +648,6 @@ public class    CircleProgressView extends View {
         setupBarPaint();
         setupBarSpinnerPaint();
         setupContourPaint();
-        setupUnitTextPaint();
-        setupTextPaint();
         setupBackgroundCirclePaint();
         setupRimPaint();
     }
@@ -974,22 +658,6 @@ public class    CircleProgressView extends View {
         mContourPaint.setAntiAlias(true);
         mContourPaint.setStyle(Style.STROKE);
         mContourPaint.setStrokeWidth(mContourSize);
-    }
-
-    private void setupUnitTextPaint() {
-        mUnitTextPaint.setStyle(Style.FILL);
-        mUnitTextPaint.setAntiAlias(true);
-    }
-
-    private void setupTextPaint() {
-//        mTextPaint.setSubpixelText(true);
-//        mTextPaint.setLinearText(true);
-//        mTextPaint.setTypeface(Typeface.MONOSPACE);
-//        mTextPaint.setColor(mTextColor);
-//        mTextPaint.setStyle(Style.FILL);
-//        mTextPaint.setAntiAlias(true);
-//        mTextPaint.setTextSize(mTextSize);
-
     }
 
     private void setupBackgroundCirclePaint() {
@@ -1014,7 +682,6 @@ public class    CircleProgressView extends View {
     }
 
     private void setupBarPaint() {
-
         if (mBarColors.length > 1) {
             mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
             Matrix matrix = new Matrix();
@@ -1070,7 +737,6 @@ public class    CircleProgressView extends View {
             mPaddingTop + (mBarWidth * 6f),
             width - mPaddingRight - (mBarWidth * 6f),
             height - mPaddingBottom - (mBarWidth * 6f));
-        mOuterTextBounds = getInnerCircleRect(mCircleBounds);
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
 
@@ -1078,10 +744,7 @@ public class    CircleProgressView extends View {
         mCircleRadius = (fullRadius - mBarWidth) + 1;
         mCenter = new PointF(mCircleBounds.centerX(), mCircleBounds.centerY());
     }
-    //endregion Setting up stuff
 
-    //----------------------------------
-    //region draw all the things
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
