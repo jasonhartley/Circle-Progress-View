@@ -1,28 +1,27 @@
 <LinearLayout xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="top|center"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/activity_vertical_margin"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin"
-              android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context=".MainActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top|center"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
 
-
-    <at.grabner.circleprogress.CircleProgressView
-        android:id="@+id/circleView"
-        android:layout_width="277dp"
-        android:layout_height="277dp"
-        CircleProgressView:fillColor="#AAAAAA"
-        CircleProgressView:barColor="#00796B"
-        CircleProgressView:barWidth="15dp"
-        CircleProgressView:contourSize="0dp"
-        CircleProgressView:maxValue="100"
-        CircleProgressView:rimColor="#F3F3F3"
-        CircleProgressView:rimWidth="15dp"
-        CircleProgressView:seekMode="true"/>
+  <at.grabner.circleprogress.CircleProgressView
+      android:id="@+id/circleView"
+      android:layout_width="277dp"
+      android:layout_height="277dp"
+      CircleProgressView:fillColor="#AAAAAA"
+      CircleProgressView:barColor="#00796B"
+      CircleProgressView:barWidth="15dp"
+      CircleProgressView:contourSize="0dp"
+      CircleProgressView:maxValue="100"
+      CircleProgressView:rimColor="#F3F3F3"
+      CircleProgressView:rimWidth="15dp"
+      CircleProgressView:seekMode="true"/>
 
 </LinearLayout>

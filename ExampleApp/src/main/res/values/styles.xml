@@ -1,18 +1,18 @@
 <resources>
 
-    <color name="primary_dark_color">#66009688</color>
-    <color name="primary_color">#ff009688</color>
-    <color name="secondary_color">#ff37474f</color>
-    <color name="perkaTealTint10">#1AA8C4 </color>
+  <color name="primary_dark_color">#66009688</color>
+  <color name="primary_color">#ff009688</color>
+  <color name="secondary_color">#ff37474f</color>
+  <color name="perkaTealTint10">#1AA8C4 </color>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
-        <item name="colorPrimary">@color/perkaTealTint10</item>
-        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-        <item name="colorPrimaryDark">@color/primary_dark_color</item>
-        <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">@color/secondary_color</item>
-    </style>
+    <item name="colorPrimary">@color/perkaTealTint10</item>
+    <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+    <item name="colorPrimaryDark">@color/primary_dark_color</item>
+    <!--   theme UI controls like checkboxes and text fields -->
+    <item name="colorAccent">@color/secondary_color</item>
+  </style>
 
 </resources>
