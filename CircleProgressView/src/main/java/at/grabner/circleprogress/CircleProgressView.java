@@ -28,54 +28,51 @@ public class CircleProgressView extends View {
     private static final boolean DEBUG = false;
 
     float mCurrentValue = 0;
-    float mValueTo      = 0;
-    float mValueFrom    = 0;
-    float mMaxValue     = 100;
+    float mValueTo = 0;
+    float mValueFrom = 0;
+    float mMaxValue = 100;
 
-    private int   mLayoutHeight = 0;
-    private int   mLayoutWidth  = 0;
-    private int   mCircleRadius = 80;
-    private int   mBarWidth     = 40;
-    private int   mRimWidth     = 40;
-    private int   mStartAngle   = 270;
+    private int mLayoutHeight = 0;
+    private int mLayoutWidth = 0;
+    private int mCircleRadius = 80;
+    private int mBarWidth = 40;
+    private int mRimWidth = 40;
+    private int mStartAngle = 270;
     private float mContourSize  = 1;
 
     //Padding (with defaults)
-    private int       mPaddingTop            = 5;
-    private int       mPaddingBottom         = 5;
-    private int       mPaddingLeft           = 5;
-    private int       mPaddingRight          = 5;
+    private int mPaddingTop = 5;
+    private int mPaddingBottom = 5;
+    private int mPaddingLeft = 5;
+    private int mPaddingRight = 5;
     //Colors (with defaults)
-    private int       mBarColorStandard      = 0xff009688; //stylish blue
-    private int       mContourColor          = 0xAA000000;
-    private int       mBackgroundCircleColor = 0x00000000; //transparent
-    private int       mRimColor              = 0xAA83d0c9;
-    private int[]     mBarColors             = new int[]{
-            mBarColorStandard //stylish blue
-    };
+    private int mBarColorStandard = Color.CYAN;
+    private int mContourColor = Color.TRANSPARENT;
+    private int mBackgroundCircleColor = Color.GRAY;
+    private int mRimColor = Color.LTGRAY;
+    private int[] mBarColors = new int[]{ mBarColorStandard };
     //Caps
-    private Paint.Cap mBarStrokeCap          = Paint.Cap.BUTT;
-//    private Paint.Cap mSpinnerStrokeCap      = Paint.Cap.BUTT;
+    private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
     //Paints
-    private Paint     mBarPaint              = new Paint();
-    private Paint     mBarSpinnerPaint       = new Paint();
-    private Paint     mBackgroundCirclePaint = new Paint();
-    private Paint     mRimPaint              = new Paint();
-    private Paint     mContourPaint          = new Paint();
+    private Paint mBarPaint = new Paint();
+    private Paint mBarSpinnerPaint = new Paint();
+    private Paint mBackgroundCirclePaint = new Paint();
+    private Paint mRimPaint = new Paint();
+    private Paint mContourPaint = new Paint();
     //Rectangles
-    private RectF     mCircleBounds          = new RectF();
-    private RectF     mInnerCircleBound      = new RectF();
+    private RectF mCircleBounds = new RectF();
+    private RectF mInnerCircleBound = new RectF();
     private RectF mInnerBitmapBound = new RectF();
     private PointF mCenter;
-
-    private Bitmap    mCenterBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
-    private Paint     mCenterPaint = new Paint();
+    // Center image
+    private Bitmap mCenterBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+    private Paint mCenterPaint = new Paint();
 
     private RectF mCircleOuterContour = new RectF();
     private RectF mCircleInnerContour = new RectF();
-    //Animation
+
     //The amount of degree to move the bar by on each draw
-    float  mSpinSpeed         = 2.8f;
+    float mSpinSpeed = 2.8f;
     /**
      * The animation duration in ms
      */
@@ -92,7 +89,6 @@ public class CircleProgressView extends View {
 
     //clipping
     private Bitmap mClippingBitmap;
-    private Paint  mMaskPaint;
 
     AnimationStateChangedListener mAnimationStateChangedListener;
 
@@ -108,7 +104,7 @@ public class CircleProgressView extends View {
         parseAttributes(context.obtainStyledAttributes(attrs,
                 R.styleable.CircleProgressView));
 
-        mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mMaskPaint.setFilterBitmap(false);
         mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         setupPaints();
@@ -477,7 +473,6 @@ public class CircleProgressView extends View {
      */
     public void setupPaints() {
         setupBarPaint();
-//        setupBarSpinnerPaint();
         setupContourPaint();
         setupBackgroundCirclePaint();
         setupRimPaint();
@@ -503,14 +498,6 @@ public class CircleProgressView extends View {
         mRimPaint.setStyle(Style.STROKE);
         mRimPaint.setStrokeWidth(mRimWidth);
     }
-
-//    private void setupBarSpinnerPaint() {
-//        mBarSpinnerPaint.setAntiAlias(true);
-//        mBarSpinnerPaint.setStrokeCap(mSpinnerStrokeCap);
-//        mBarSpinnerPaint.setStyle(Style.STROKE);
-//        mBarSpinnerPaint.setStrokeWidth(mBarWidth);
-//        mBarSpinnerPaint.setColor(mSpinnerColor);
-//    }
 
     private void setupBarPaint() {
         if (mBarColors.length > 1) {
