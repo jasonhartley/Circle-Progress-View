@@ -3,11 +3,11 @@ package at.grabner.circleview;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import at.grabner.circleprogress.CircleProgressView;
+import at.grabner.circleprogress.TierBadgeView;
 
 public class MainActivity extends AppCompatActivity {
 
-    CircleProgressView mCircleView;
+    TierBadgeView mCircleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCircleView = (CircleProgressView) findViewById(R.id.circleView);
+        mCircleView = (TierBadgeView) findViewById(R.id.circleView);
 
         mCircleView.setMaxValue(100);
         mCircleView.setCenterImage(R.drawable.tier_reg_r);

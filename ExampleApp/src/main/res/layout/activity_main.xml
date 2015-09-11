@@ -1,4 +1,5 @@
-<LinearLayout xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +12,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-  <at.grabner.circleprogress.CircleProgressView
+  <at.grabner.circleprogress.TierBadgeView
       android:id="@+id/circleView"
       android:layout_width="277dp"
       android:layout_height="277dp"
@@ -21,7 +22,6 @@
       CircleProgressView:contourSize="0dp"
       CircleProgressView:maxValue="100"
       CircleProgressView:rimColor="#F3F3F3"
-      CircleProgressView:rimWidth="15dp"
-      CircleProgressView:seekMode="true"/>
+      CircleProgressView:rimWidth="15dp"/>
 
 </LinearLayout>

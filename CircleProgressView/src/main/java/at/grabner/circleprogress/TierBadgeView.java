@@ -23,7 +23,28 @@ import android.support.annotation.IntRange;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class CircleProgressView extends View {
+public class TierBadgeView extends View {
+
+  enum AnimationState {
+    IDLE,
+    ANIMATING
+  }
+
+  enum AnimationMsg {
+    SET_VALUE,
+    SET_VALUE_ANIMATED,
+    TICK
+  }
+
+  interface AnimationStateChangedListener {
+
+    /**
+     * Call if animation state changes.
+     * This code runs in the animation loop, so keep your code short!
+     * @param tierBadgeAnimationState
+     */
+    void onAnimationStateChanged(TierBadgeView.AnimationState tierBadgeAnimationState);
+  }
 
   private static final boolean DEBUG = false;
 
@@ -63,7 +84,7 @@ public class CircleProgressView extends View {
   private RectF mCircleBounds = new RectF();
   private RectF mInnerCircleBound = new RectF();
   private RectF mInnerBitmapBound = new RectF();
-  private PointF mCenter;// for future use: might be better for bitmap placement
+  private PointF mCenter;// for future use: might be better for center bitmap placement
   // Center image
   private Bitmap mCenterBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
   private Paint mCenterPaint = new Paint();
@@ -71,8 +92,6 @@ public class CircleProgressView extends View {
   private RectF mCircleOuterContour = new RectF();
   private RectF mCircleInnerContour = new RectF();
 
-  //The amount of degree to move the bar by on each draw
-  float mSpinSpeed = 2.8f;
   /**
    * The animation duration in ms
    */
@@ -82,15 +101,15 @@ public class CircleProgressView extends View {
   int mDelayMillis = 15;
 
   //The animation handler containing the animation state machine.
-  Handler mAnimationHandler = new AnimationHandler(this);
+  Handler mAnimationHandler = new TierBadgeAnimationHandler(this);
 
   //The current state of the animation state machine.
-  AnimationState mAnimationState = AnimationState.IDLE;
+  TierBadgeView.AnimationState mAnimationState = TierBadgeView.AnimationState.IDLE;
 
   //clipping
   private Bitmap mClippingBitmap;
 
-  AnimationStateChangedListener mAnimationStateChangedListener;
+  TierBadgeView.AnimationStateChangedListener mAnimationStateChangedListener;
 
   /**
    * The constructor for the CircleView
@@ -98,11 +117,10 @@ public class CircleProgressView extends View {
    * @param context The context.
    * @param attrs   The attributes.
    */
-  public CircleProgressView(Context context, AttributeSet attrs) {
+  public TierBadgeView(Context context, AttributeSet attrs) {
     super(context, attrs);
 
-    parseAttributes(context.obtainStyledAttributes(attrs,
-        R.styleable.CircleProgressView));
+    parseAttributes(context.obtainStyledAttributes(attrs, R.styleable.TierBadgeView));
 
     Paint mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     mMaskPaint.setFilterBitmap(false);
@@ -116,49 +134,44 @@ public class CircleProgressView extends View {
    * @param a the attributes to parse
    */
   private void parseAttributes(TypedArray a) {
-    setBarWidth((int) a.getDimension(R.styleable.CircleProgressView_barWidth,
+    setBarWidth((int) a.getDimension(R.styleable.TierBadgeView_barWidth,
         mBarWidth));
 
-    setRimWidth((int) a.getDimension(R.styleable.CircleProgressView_rimWidth,
+    setRimWidth((int) a.getDimension(R.styleable.TierBadgeView_rimWidth,
         mRimWidth));
 
-    if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1) && a.hasValue(R.styleable.CircleProgressView_barColor2) && a.hasValue(R.styleable.CircleProgressView_barColor3)) {
-      mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor2, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor3, mBarColorStandard)};
+    if (a.hasValue(R.styleable.TierBadgeView_barColor) && a.hasValue(R.styleable.TierBadgeView_barColor1) && a.hasValue(R.styleable.TierBadgeView_barColor2) && a.hasValue(R.styleable.TierBadgeView_barColor3)) {
+      mBarColors = new int[]{a.getColor(R.styleable.TierBadgeView_barColor, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor1, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor2, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor3, mBarColorStandard)};
 
-    } else if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1) && a.hasValue(R.styleable.CircleProgressView_barColor2)) {
+    } else if (a.hasValue(R.styleable.TierBadgeView_barColor) && a.hasValue(R.styleable.TierBadgeView_barColor1) && a.hasValue(R.styleable.TierBadgeView_barColor2)) {
+      mBarColors = new int[]{a.getColor(R.styleable.TierBadgeView_barColor, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor1, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor2, mBarColorStandard)};
 
-      mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor2, mBarColorStandard)};
-
-    } else if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1)) {
-
-      mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard)};
+    } else if (a.hasValue(R.styleable.TierBadgeView_barColor) && a.hasValue(R.styleable.TierBadgeView_barColor1)) {
+      mBarColors = new int[]{a.getColor(R.styleable.TierBadgeView_barColor, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor1, mBarColorStandard)};
 
     } else {
-      mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard)};
+      mBarColors = new int[]{a.getColor(R.styleable.TierBadgeView_barColor, mBarColorStandard), a.getColor(R.styleable.TierBadgeView_barColor, mBarColorStandard)};
     }
 
-    setRimColor(a.getColor(R.styleable.CircleProgressView_rimColor,
-        mRimColor));
+    setRimColor(a.getColor(R.styleable.TierBadgeView_rimColor, mRimColor));
 
-    setFillCircleColor(a.getColor(R.styleable.CircleProgressView_fillColor,
-        mBackgroundCircleColor));
+    setFillCircleColor(a.getColor(R.styleable.TierBadgeView_fillColor, mBackgroundCircleColor));
 
-    setContourColor(a.getColor(R.styleable.CircleProgressView_contourColor, mContourColor));
-    setContourSize(a.getDimension(R.styleable.CircleProgressView_contourSize, mContourSize));
+    setContourColor(a.getColor(R.styleable.TierBadgeView_contourColor, mContourColor));
+    setContourSize(a.getDimension(R.styleable.TierBadgeView_contourSize, mContourSize));
 
-    setMaxValue(a.getFloat(R.styleable.CircleProgressView_maxValue, mMaxValue));
+    setMaxValue(a.getFloat(R.styleable.TierBadgeView_maxValue, mMaxValue));
 
-    setStartAngle(a.getInt(R.styleable.CircleProgressView_startAngle, mStartAngle));
+    setStartAngle(a.getInt(R.styleable.TierBadgeView_startAngle, mStartAngle));
 
     // Recycle
     a.recycle();
   }
 
   /*
- * When this is called, make the view square.
- * From: http://www.jayway.com/2012/12/12/creating-custom-android-views-part-4-measuring-and-how-to-force-a-view-to-be-square/
- *
- */
+  * When this is called, make the view square.
+  * From: http://www.jayway.com/2012/12/12/creating-custom-android-views-part-4-measuring-and-how-to-force-a-view-to-be-square/
+  */
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     // The first thing that happen is that we call the superclass
@@ -204,7 +217,6 @@ public class CircleProgressView extends View {
 
 
   private RectF getInnerCircleRect(RectF _circleBounds) {
-
     double circleWidth = +_circleBounds.width() - (Math.max(mBarWidth, mRimWidth)) - (mContourSize * 2);
     double width = ((circleWidth / 2d) * Math.sqrt(2d));
     float widthDelta = (_circleBounds.width() - (float) width) / 2f;
@@ -213,7 +225,6 @@ public class CircleProgressView extends View {
     float scaleY = 1;
 
     return new RectF(_circleBounds.left + (widthDelta * scaleX), _circleBounds.top + (widthDelta * scaleY), _circleBounds.right - (widthDelta * scaleX), _circleBounds.bottom - (widthDelta * scaleY));
-
   }
 
   /**
@@ -408,10 +419,6 @@ public class CircleProgressView extends View {
     mMaxValue = _maxValue;
   }
 
-  public float getSpinSpeed() {
-    return mSpinSpeed;
-  }
-
   public int getRimWidth() {
     return mRimWidth;
   }
@@ -439,15 +446,15 @@ public class CircleProgressView extends View {
   }
 
   /**
-   * @param _clippingBitmap The bitmap used for clipping. Set to null to disable clipping.
+   * @param clippingBitmap The bitmap used for clipping. Set to null to disable clipping.
    *            Default: No clipping.
    */
-  public void setClippingBitmap(Bitmap _clippingBitmap) {
+  public void setClippingBitmap(Bitmap clippingBitmap) {
 
     if (getWidth() > 0 && getHeight() > 0) {
-      mClippingBitmap = Bitmap.createScaledBitmap(_clippingBitmap, getWidth(), getHeight(), false);
+      mClippingBitmap = Bitmap.createScaledBitmap(clippingBitmap, getWidth(), getHeight(), false);
     } else {
-      mClippingBitmap = _clippingBitmap;
+      mClippingBitmap = clippingBitmap;
     }
     if (mClippingBitmap == null) {
       // enable HW acceleration
@@ -462,9 +469,9 @@ public class CircleProgressView extends View {
     return mStartAngle;
   }
 
-  public void setStartAngle(int _startAngle) {
+  public void setStartAngle(int startAngle) {
     // get a angle between 0 and 360
-    mStartAngle = (int) normalizeAngle(_startAngle);
+    mStartAngle = (int) normalizeAngle(startAngle);
   }
 
   /**
@@ -601,8 +608,8 @@ public class CircleProgressView extends View {
     canvas.drawRect(mInnerBitmapBound, innerRectPaint);
   }
 
-  private void drawBar(Canvas _canvas, float _degrees) {
-    _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+  private void drawBar(Canvas canvas, float degrees) {
+    canvas.drawArc(mCircleBounds, mStartAngle, degrees, false, mBarPaint);
   }
 
   private void drawInnerBitmap(Canvas canvas) {
@@ -613,43 +620,27 @@ public class CircleProgressView extends View {
    * Set the value of the circle view without an animation.
    * Stops any currently active animations.
    *
-   * @param _value The value.
+   * @param value The value.
    */
-  public void setValue(float _value) {
+  public void setValue(float value) {
     Message msg = new Message();
-    msg.what = AnimationMsg.SET_VALUE.ordinal();
-    msg.obj = new float[]{_value, _value};
+    msg.what = TierBadgeView.AnimationMsg.SET_VALUE.ordinal();
+    msg.obj = new float[]{value, value};
     mAnimationHandler.sendMessage(msg);
   }
 
   /**
    * Sets the value of the circle view with an animation.
    *
-   * @param _valueFrom     start value of the animation
-   * @param _valueTo       value after animation
-   * @param _animationDuration the duration of the animation in milliseconds
+   * @param valueFrom     start value of the animation
+   * @param valueTo       value after animation
+   * @param animationDuration the duration of the animation in milliseconds
    */
-  public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
-    mAnimationDuration = _animationDuration;
+  public void setValueAnimated(float valueFrom, float valueTo, long animationDuration) {
+    mAnimationDuration = animationDuration;
     Message msg = new Message();
-    msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
-    msg.obj = new float[]{_valueFrom, _valueTo};
-    mAnimationHandler.sendMessage(msg);
-  }
-
-  /**
-   * Sets the value of the circle view with an animation.
-   * The current value is used as the start value of the animation
-   *
-   * @param _valueTo       value after animation
-   * @param _animationDuration the duration of the animation in milliseconds.
-   */
-  public void setValueAnimated(float _valueTo, long _animationDuration) {
-
-    mAnimationDuration = _animationDuration;
-    Message msg = new Message();
-    msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
-    msg.obj = new float[]{mCurrentValue, _valueTo};
+    msg.what = TierBadgeView.AnimationMsg.SET_VALUE_ANIMATED.ordinal();
+    msg.obj = new float[]{valueFrom, valueTo};
     mAnimationHandler.sendMessage(msg);
   }
 
@@ -657,23 +648,39 @@ public class CircleProgressView extends View {
    * Sets the value of the circle view with an animation.
    * The current value is used as the start value of the animation
    *
-   * @param _valueTo value after animation
+   * @param valueTo       value after animation
+   * @param animationDuration the duration of the animation in milliseconds.
    */
-  public void setValueAnimated(float _valueTo) {
+  public void setValueAnimated(float valueTo, long animationDuration) {
+
+    mAnimationDuration = animationDuration;
+    Message msg = new Message();
+    msg.what = TierBadgeView.AnimationMsg.SET_VALUE_ANIMATED.ordinal();
+    msg.obj = new float[]{mCurrentValue, valueTo};
+    mAnimationHandler.sendMessage(msg);
+  }
+
+  /**
+   * Sets the value of the circle view with an animation.
+   * The current value is used as the start value of the animation
+   *
+   * @param valueTo value after animation
+   */
+  public void setValueAnimated(float valueTo) {
 
     mAnimationDuration = 1200;
     Message msg = new Message();
-    msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
-    msg.obj = new float[]{mCurrentValue, _valueTo};
+    msg.what = TierBadgeView.AnimationMsg.SET_VALUE_ANIMATED.ordinal();
+    msg.obj = new float[]{mCurrentValue, valueTo};
     mAnimationHandler.sendMessage(msg);
   }
 
   /**
-   * @param _angle The angle in degree to normalize
+   * @param angle The angle in degree to normalize
    * @return the angle between 0 (EAST) and 360
    */
-  public static float normalizeAngle(float _angle) {
-    return (((_angle % 360) + 360) % 360);
+  public static float normalizeAngle(float angle) {
+    return (((angle % 360) + 360) % 360);
   }
 
 }
