@@ -7,7 +7,7 @@ import at.grabner.circleprogress.TierBadgeView;
 
 public class MainActivity extends AppCompatActivity {
 
-    TierBadgeView mCircleView;
+    TierBadgeView mTierBadgeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,18 +15,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCircleView = (TierBadgeView) findViewById(R.id.circleView);
+        mTierBadgeView = (TierBadgeView) findViewById(R.id.tierBadgeView);
 
-        mCircleView.setMaxValue(100);
-        mCircleView.setCenterImage(R.drawable.tier_reg_r);
-        mCircleView.setBarColor(getResources().getColor(R.color.primary_color));
+        mTierBadgeView.setMaxValue(100);
+        mTierBadgeView.setCenterImage(R.drawable.tier_reg_r);
+        mTierBadgeView.setBarColor(getResources().getColor(R.color.primary_color));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mCircleView.setValue(0);
-        mCircleView.setValueAnimated(42, 1500);
+        mTierBadgeView.setValue(0);
+        mTierBadgeView.setValueAnimated(42, 1500);
     }
 
 }

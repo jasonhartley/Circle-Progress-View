@@ -13,7 +13,7 @@
     tools:context=".MainActivity">
 
   <at.grabner.circleprogress.TierBadgeView
-      android:id="@+id/circleView"
+      android:id="@+id/tierBadgeView"
       android:layout_width="277dp"
       android:layout_height="277dp"
       CircleProgressView:fillColor="#AAAAAA"
